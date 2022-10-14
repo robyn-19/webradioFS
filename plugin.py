@@ -190,84 +190,11 @@ def deak1(ans):
       else:
            main(session)      
 def countrys(land):
-    global first
-    
-    if land:   
-      try:  
-       if land[1].startswith("#"):
-           main(session)
-       elif land[1]=="skip":      
-          f_start(session)              
-       elif land[1]=="deaktivate":
-            session.openWithCallback(deak1, MessageBox, _("reactivate not possible, really switch off permanently?")+"\n", type = MessageBox.TYPE_YESNO)
-
-       elif land[0]:
-        first=None
-        if land[1]=="deakt":
-            zahl=1
-        else:
-            import urllib2,urllib
-            parameters = {'anfrage' : "sender", 'land' : str(land[0]).strip()}
-            data = urllib.urlencode(parameters)
-            f =  urllib2.urlopen("https://www.fs-plugins.de/wbr2FS/dlp/wbrfsreads2.php", data,timeout=20).readlines()
-            from wbrfs_funct import fav_import3
-            zahl=fav_import3().imp2(f)
-        if zahl:
-            connection = sqlite3.connect(set_file)
-            connection.text_factory = str
-            wbrfscursor = connection.cursor()
-            wbrfscursor.execute('UPDATE settings SET wert1 = "aktiviert2" WHERE nam1 = "eidie" AND group1 = "prog";')
-            connection.commit()
-            wbrfscursor.close()
-            connection.close()
-        f_start(session)
-       else:
-        first=None
-        f_start(session)
-      except:
-        Notifications.AddNotification(MessageBox, _("webradioFS-db unfortunately not available at the moment")+"\n", type=MessageBox.TYPE_INFO)
-        f_start(session)
-
-    else:
-        first=None
         main(session)
 
 def main(session, **kwargs):
-  fr1=1
-  if first:
-    try:
-      import urllib2
-      from Screens.ChoiceBox import ChoiceBox
-      request = urllib2.Request("https://www.fs-plugins.de/wbr2FS/dlp/first3.php")
-      f =  urllib2.urlopen(request,timeout=10).readlines()
-      c_land=[]
-      dat1="0"
-      laender="0"
-      anzahl="0"
-      if len(f)>10:
-        for x in f:
-                x=str(x).strip()
-                if x.startswith("dat_"): 
-                    dat1=x.replace("dat_","")
-                elif x.startswith("lander_"): 
-                   laender=x.replace("lander_","")
-                elif x.startswith("streams_"): 
-                    anzahl=x.replace("streams_","")
-                elif x.startswith("x"): 
-                    c_land.append((x.replace("x",""),"#"+x))
-                else:
-                    c_land.append((x,x))
-        info="-> Info: "+dat1 + " / " + laender + " genres" + " / " + str(anzahl) + " streams"   
-        c_land.insert(0, (info,"#"+info) )
-        c_land.insert(0, (_("deactivate permanently"),"deaktivate") )
-        c_land.insert(0, (_("skip function"),"skip") )
-        session.openWithCallback(countrys, ChoiceBox, title=_('select preferred country'), list=c_land)
-      else:
-         f_start(session)
-    except:
-      f_start(session)
-  else:
-      f_start(session)
+        f_start(session)
+
 
 def f_start(session):
   #if fr1==2:
