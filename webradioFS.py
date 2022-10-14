@@ -2301,7 +2301,7 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
         try:
             parameters = {'anfrage' : self.eidie, 'land' : str(land[0]).strip()}
             data = urllib.urlencode(parameters)
-            f =  urllib2.urlopen("https://www.fs-plugins.de/wbr2FS/dlp/wbrfsreads2.php", data,timeout=20).readlines()
+            f =  "" #urllib2.urlopen("https://", data,timeout=20).readlines()
             if len(f):
                 from wbrfs_funct import fav_import3
                 zahl=fav_import3().imp2(f)
@@ -2320,42 +2320,7 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
           pass
           
     def importer(self):
-      self.menu_back()
-      self.eidie=sets_prog["eidie"]
-      extern=load_dats().reading()
-      if len(str(self.eidie))==14:
-        import urllib2
-        import socket
-        try:
-            socket.setdefaulttimeout(10)
-            request = urllib2.Request("https://www.fs-plugins.de/wbr2FS/dlp/first3.php")
-            f =  urllib2.urlopen(request,timeout=30).readlines()
-            c_land=[]
-            dat1="0"
-            laender="0"
-            anzahl="0"
-            for x in f:
-                x=str(x).strip()
-                if x.startswith("dat_"): 
-                    dat1=x.replace("dat_","")
-                elif x.startswith("lander_"): 
-                   laender=x.replace("lander_","")
-                elif x.startswith("streams_"): 
-                    anzahl=x.replace("streams_","")
-                elif x.startswith("#"): 
-                    c_land.append((x.replace("#",""),x))
-                else:
-                    x2=x.split("(")[0]
-                    c_land.append((x,x2))
-            info="-> Info: "+dat1 + " / " + laender + " genres" + " / " + str(anzahl) + " streams"   
-            c_land.insert(0, (info,"#"+info) )
-            right_site.hide()
-            self.session.openWithCallback(self.countrys, ChoiceBox, title=_('Select genre/country'), list=c_land)
-        except Exception, e:
-          txt=_("Server not available or Internet connection not correct")+"\n"+str(e)
-          self.meld_screen(txt,"webradioFS - ERROR",20,"ERROR")        
-      else:
-          txt=_("only for family, friends and supporters")+",\n"+_("valid user-ID required")
+          txt=_("function not exist")+",\n")
           self.meld_screen(txt,"webradioFS - Info",20)
 
     def countrys2(self,land):
@@ -5607,7 +5572,7 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
 
 
             aboutlist.append(('Autor: shadowrider',""))
-            aboutlist.append(('website: https://www.fs-plugins.de'," "))
+            aboutlist.append(('website: github'," "))
             aboutlist.append((" "," "))
             aboutlist.append((" ",' '))
             #if self.versionstest and self.versionsalter<2:
@@ -6675,7 +6640,7 @@ class Fav_edit_13(Screen, ConfigListScreen):
             
             parameters = {'anfrage' : sets_prog["eidie"], 'einzel' : self.conf_stream.value}
             data = urllib.urlencode(parameters)
-            f =  urllib2.urlopen("https://www.fs-plugins.de/wbr2FS/dlp/wbrfsreads2.php", data,timeout=20).read()
+            f =  "" #urllib2.urlopen("https://", data,timeout=20).read() #not source!
             if len(f):
                 if str(f).strip()=="none":
                     self.meld_screen(_("stream-name not found in database"),"webradioFS - Info",0,"ERROR")
@@ -10168,7 +10133,7 @@ def debug(result=None):
 		else:
 		   lines=lines[3:]
                 f.write("log from webradioFS, Version "+myversion+"\n")
-                f.write("please meld errors on www.fs-plugins.de\n\n")
+                #f.write("please meld errors on www.fs-plugins.de\n\n")
 		
                 for x in lines:
 			f.write(x)   
