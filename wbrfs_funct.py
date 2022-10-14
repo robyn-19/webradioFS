@@ -782,12 +782,13 @@ class load_rf:
         self.s('/strf/slv2', '/usr/lib/libvorbisenc.so.2.0.6')
         self.f()
     def s(self, url, file1):
-        web="https://fs-plugins.de/wbr2FS"
-        try:
-            h = urllib.urlretrieve(web + url, file1)
-            chmod(file1, 493)
-        except Exception, e:
-            pass
+       pass
+	#web="" #not source - for this must have a source!
+        #try:
+        #    h = urllib.urlretrieve(web + url, file1)
+        #    chmod(file1, 493)
+        #except Exception, e:
+        #    pass
 
     def f(self):
         from webradioFS import right_site
