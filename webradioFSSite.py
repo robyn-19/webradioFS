@@ -405,7 +405,6 @@ class webradioFSweb(resource.Resource):
                 html += '<td width=200px style="padding-left: 10px;"><a style="font-size:1.2em;color:#6495ED" ">  </a></td>'                
                 html += '<td width=200px style="text-align: center; vertical-align:bottom;font-size:1em;color:#FFFFFF">\n'
                 html += '<b><i>Version: %s</i></b></td>\n'    % (myversion)
-                #html += '<td width=200px align="right" style="padding-right: 10px;" ><a style="font-size:1.2em;color:#6495ED" href="https://www.fs-plugins.de/addstream/?uploader=%s" target="_blank"> send new Stream </a></td>'  % nickname
                 html += '</tr></table>'                
                 #html += '<div width='+str(640/breite)+'px style=\"padding-top:2px;padding-bottom:2px;\"><img border=\"0\" src=\"/webradiofs/skin/images/webif_line.png\" ></div>'
                 html += '<div class="line"></div>'
@@ -622,10 +621,6 @@ class webradioFSweb(resource.Resource):
                                  html += ' <img border=\"0\" src=\"/webradiofs/skin/images/rec1.png">'
                             elif x[0]==stream and self.l4l_info and self.l4l_info.get("rec","")==2:
                                  html += ' <img border=\"0\" src=\"/webradiofs/skin/images/rc1.png">'
-#                            if int(x[4]) ==0 and x[0]==stream:
-#                              from webradioFS import uploadinfo
-#                              if uploadinfo:
-#                                  html += '&nbsp;&nbsp;<a style="color:#6495ED" href="https://www.fs-plugins.de/addstream/?data=%s" target="_blank">Upload</a>'   % uploadinfo
 
                         html += "</td></tr></table>\n"
                         html += '<div class="line"></div>\n'
