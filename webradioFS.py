@@ -1,15 +1,6 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # webradioFS von shadowrider
-# VU+ Edition
-# Chrashlogs, Vorschlaege, Beschwerden usw. bitte an plugins(at)fs-plugins.de
-#
-# This plugin is licensed under the Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0). 
-# To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
-# or send a letter to CreativeCommons, 559 Nathan Abbott Way, Stanford, California 94305, USA
-#
-# In addition, this plugin may only be distributed and executed on
-# hardware which is licensed by Vu+ and E2 
 ###############################################################################
 
 from . import _
@@ -2968,7 +2959,7 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
 
                         if self.rec_set_list["rec_new_dir"]:
                            str_verz=self.play_stream["name"].strip()#.replace("/","_")
-                           entf1=(" ".join(re.findall(r"[A-Za-z0-9üäöÜÄÖß\-\+]*", str_verz))).replace("  "," ").replace("   "," ")
+                           entf1=(" ".join(re.findall(r"[A-Za-z0-9Ã¼Ã¤Ã¶ÃœÃ„Ã–ÃŸ\-\+]*", str_verz))).replace("  "," ").replace("   "," ")
                            self.rec_path = self.rec_path+entf1.strip()#+"/"
        
                         if not os.path.exists(self.rec_path):
