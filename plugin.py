@@ -2,7 +2,6 @@
 ###############################################################################
 # webradioFS von shadowrider
 # VU+ Edition
-# Chrashlogs, Vorschlaege, Beschwerden usw. bitte an plugins (at) fs-plugins.de
 #
 # This plugin is licensed under the Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0). 
 # To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
