@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # webradioFS von shadowrider
-# VU+ Edition
-#
-# This plugin is licensed under the Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0). 
-# To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
-# or send a letter to CreativeCommons, 559 Nathan Abbott Way, Stanford, California 94305, USA
-#
-# In addition, this plugin may only be distributed and executed on
-# hardware which is licensed by Vu+ and E2 
 ###############################################################################
 from . import _
 from Plugins.Plugin import PluginDescriptor
