@@ -33,14 +33,6 @@ sample: http://192.168.1.10:80/webradiofs/?stream=Bayern%201
 ### --- Gruppe umschalten /toggle group:  --- ###
   /webradiofs/?fav=Groupname
 sample: http://192.168.1.10:80/webradiofs/?fav=my fav
-
- 
- 
- 
- 
- 
- 
- 
  
  
  
