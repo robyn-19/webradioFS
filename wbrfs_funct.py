@@ -1556,8 +1556,8 @@ class tag_read:
 
 
 
-
-web1 = 'fs-plugins.de/wbrfs_3/ausles16'
+#not source!!
+web1 = ''
 web = 'https://www.' + web1
 
 
