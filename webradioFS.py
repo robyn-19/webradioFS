@@ -2320,7 +2320,7 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
           pass
           
     def importer(self):
-          txt=_("function not exist")+",\n")
+          txt=_("function not exist")+",\n"
           self.meld_screen(txt,"webradioFS - Info",20)
 
     def countrys2(self,land):
