@@ -4009,10 +4009,6 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
         self.showConfigDone()
 
     def edit(self,answer =True):
-       f=open("/tmp/002","w")
-       f.write(str(self["streamlist"].getCurrent()[0]))
-       f.close()
-       #('faysal fm', 8001, 0, 0, 0, 1000, 0, 'radio', 0, 0, '', 'http://sostecstream.com:9994/stream', 'MP3', '96')
        if self.configfile2[1] ==10:
           if self["streamlist"].getCurrent() is not None:
              selectedStream = self["streamlist"].getCurrent()[0]
