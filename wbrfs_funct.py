@@ -1,4 +1,3 @@
-#Embedded file name: /usr/lib/enigma2/python/Plugins/Extensions/webradioFS/wbrfs_funct.py
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Screens.InputBox import InputBox
@@ -54,18 +53,12 @@ try:
 except ImportError, e:
     tarfile = None
 
-
-
-
-
 set_file='/etc/ConfFS/webradioFS_sets.db'
-
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/webradioFS'
 
 class read_settings1:
   def reading(self,sets_liste=None):
     if sets_liste:
-        
         if "prog" in sets_liste:
             self.sets_prog={"version":0,"eidie":"first","wbrmeld":"","hauptmenu": False,"DPKG":False,"exttmenu":True}
         if "grund" in sets_liste:    
@@ -80,7 +73,6 @@ class read_settings1:
             self.sets_exp={"reconnect":3,"versions_info":"True","timeout":10,"conwait":3,"logopath":"/etc/ConfFS/streamlogos/","coversafepath":"/etc/ConfFS/cover/",
                 "FBts_liste":"0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24","al_vol_max":50,"ex_vol":0,"start_vol":0,"vol_auto_time":8,
                 "picwords1":"","picwords2":"","picwords3":"","offtimer_time":120,"offtimer_art":0,"wbrfspvrpath":"/usr/share/enigma2/Picon/","min_bitrate":0,"debug":0,"stop_abschalt":False}
-        
         if "scr" in sets_liste:
             self.sets_scr={"screensaver_art":"wechsel","color":"005B00","bgcolor":"000000","bgcolor_random":0,"slideshow_bgcolor":"000000","Keyword":"Hund",
                 "slideshow_time":10,"slideshowpath":"/media/hdd/","slideshow_subdirs":True,"slideshow_space":0,"timeout":60,
@@ -92,39 +84,35 @@ class read_settings1:
         if "sispmctl" in sets_liste:
                 self.sets_sispmctl={"start":"2,2,2,2","exit":"2,2,2,2","ssr1":"2,2,2,2","ssr2":"2,2,2,2",
                  "nvers1":"Switching Version 1","vers1":"2,2,2,2","nvers2":"Switching Version 2","vers2":"2,2,2,2"}    
-
         all_sets=[]
         connection = sqlite.connect(set_file)
         connection.text_factory = str
         cursor = connection.cursor()
-        #f=open("/tmp/sets3","w")
         for setx in sets_liste: 
           try:
-            for key,var in vars(self)["sets_"+setx].items():   #key,var
-    	        cursor.execute('SELECT wert1 FROM settings WHERE nam1 = "%s" AND group1 = "%s";' % (key,setx))
-	        row = cursor.fetchone()
-	        if row is None:
-		    uni=str(setx)+str(key)
+            for key,var in vars(self)["sets_"+setx].items():
+                cursor.execute('SELECT wert1 FROM settings WHERE nam1 = "%s" AND group1 = "%s";' % (key,setx))
+            row = cursor.fetchone()
+            if row is None:
+                    uni=str(setx)+str(key)
                     cursor.execute("INSERT OR IGNORE INTO settings (group1,nam1,wert1,wert2) VALUES(?,?,?,?);",  (setx,key,str(var),uni))
-		    connection.commit()
-	        else:
-                    if len(str(row[0])):  
+                    connection.commit()
+            else:
+                    if len(str(row[0])):
                         try: 
                             vars(self)["sets_"+setx][key]=int(row[0]) 
                         except:
                             if row[0].strip() in ("False","false","None","none"):
                                 vars(self)["sets_"+setx][key] = False
                             elif row[0].strip() in ("True","true"):
-                                vars(self)["sets_"+setx][key] = True                            
-                            else:                
+                                vars(self)["sets_"+setx][key] = True
+                            else:
                                 vars(self)["sets_"+setx][key] = row[0].strip()
-                               
             all_sets.append(vars(self)["sets_"+setx])
           except:
-             continue        
+             continue
         cursor.close()
         connection.close()
-
         return  all_sets
 
 class read_einzeln:
@@ -154,9 +142,9 @@ class read_einzeln:
                             elif row[0].strip() in ("False","false","None","none"):
                                 return_liste.append(False)
                             elif row[0].strip() in ("True","true"):
-                                return_liste.append(True)                            
-                            else:                
-                                return_liste.append(row[0].strip())                
+                                return_liste.append(True)
+                            else:
+                                return_liste.append(row[0].strip())
                     elif "nickname" in einz:
                                 return_liste.append("nn")
             cursor.close()
@@ -174,21 +162,18 @@ class read_plan:
             for row in cursor:
                   ut=row[0].split(":")
                   ut1=(int(ut[0]),int(ut[1]))
-
                   sets=row[1].split(";")
                   active=False
                   if len(sets)>1 and sets[1].strip() in ("True","true"):
                       active=True
                   art="select"
                   if len(sets)>2 and sets[2].strip() !="None":
-                      art=sets[2]                  
-                  
+                      art=sets[2]
                   repeat="daily"
                   if len(sets)>3 and sets[3].strip() !="None":repeat=sets[3]
                   datum=None
                   if len(sets)>4 and sets[4].strip() !="None":
                       datum=float(sets[4])
-                      #datum= date.fromtimestamp(datum)
                   weekdays=None
                   if len(sets)>5 and sets[5].strip() !="None":
                       weekdays1=sets[5].split(",") 
@@ -198,7 +183,6 @@ class read_plan:
                            if day=="True":
                                d=True
                            weekdays.append(d)
-
                   term1={"active":active,"streamid":int(sets[0]),"setid":row[2],"time":ut1,"art":art,"repeat":repeat,"datum":datum,"weekdays":weekdays}
                   for i in range(6, 10):
                       arg= None
@@ -206,11 +190,9 @@ class read_plan:
                           arg= sets[i]
                       strarg="arg"+str(i)
                       term1.update({strarg:arg})
-                
                   return_liste.append((None,row[0],active,term1))
             cursor.close()
             connection.close()
-
             return  return_liste
 
     def deling(self,pl_id=None):
@@ -227,7 +209,6 @@ class read_plan:
                 connection = sqlite.connect(set_file)
                 connection.text_factory = str
                 cursor = connection.cursor()
-
                 if str(pl_id) != "neu":
                     wert2=str(nam)+str(pl_id)
                     cursor.execute('UPDATE OR IGNORE settings SET nam1=?,wert1=?,wert2=? WHERE id=?', (nam,wert,wert2,pl_id))
@@ -236,15 +217,8 @@ class read_plan:
                     max1 = cursor.fetchone()
                     wert2=str(nam)+str(max1[0]+1)
                     cursor.execute('INSERT OR IGNORE INTO settings (group1,nam1,wert1,wert2) Values (?,?,?,?)', ("plan",nam,wert,wert2))
-
                 cursor.close()
                 connection.commit()
-
-
-
-
-
-
 #////////// planer ende
 
 fp=read_einzeln().reading((("grund","favpath"),("grund","nickname"),("prog","DPKG")))
@@ -268,14 +242,12 @@ class StreamPlayer:
     def play(self, url):
         if self.is_playing:
             self.stop()
-        #urls= Streamlist().streams(url,None,10,1)
-        #url=url.replace("http","https")
         try:
             serv = '4097:0:0:0:0:0:0:0:0:0:%s' % quote(url)
             esref = eServiceReference(serv)
             self.session.nav.playService(esref)
             self.is_playing = True
-        except Exception, e:
+        except Exception as e:
             f=open("/tmp/webradioFS_debug.log","a")
             f.write(str(e)+"\n")
             f.close()
@@ -343,48 +315,30 @@ class Streamlist:
                     f.write("streamtest ==> "+str(stream)+"\n")
                     f.write(str(i1)+"\n")
                     f.close()
-                
-
-
-
                 if len(linex2):
                     linex = linex2.split('\n')
-                #f=open("/tmp/webradioFS_debug.log","a")
-                #f.write("make streams\n"+str(i1)+"\n")
                 if linex and (typ == 'pls' or typ == 'm3u' or stream.endswith('pls') or stream.endswith('m3u')):
                     for x in linex:
-                        #f.write(str(linex2)+"\n")
                         str2=None
                         if len(x.strip()) > 1 and len(x.strip()) < 200:
                             if x.strip().startswith('http'):
                                 str2=x.strip()
-                                #streamliste.append(x.strip())
-                                #typ_check = 'm3u'
                             else:
                                 try:
                                     zeile = x.split('=')
                                     if len(zeile) > 1 and len(x.strip()) < 200:
                                         if zeile[1].strip().startswith('http'):
                                             str2=zeile[1].strip()
-                                            #typ_check = 'pls'
                                 except:
                                     pass
                             if str2:
-                               #f.write(str2+"\n")
                                if ".antenne.de/" in str2:
                                  str2=str2.replace("http:","https:")
                                streamliste.append(str2)
-                
-                
                 if not len(streamliste):
                     streamliste = [stream, stream]
-                    #f.write("no streams\n")
                 if len(streamliste) == 1:
                     streamliste = [streamliste[0], streamliste[0]]
-                    #f.write("1 stream\n")
-
-                #f.write(str(streamliste)+"\n")
-                #f.close()
                 return (streamliste, typ1, stream)
             except urllib2.HTTPError as err:
                 return (None, str(err))
@@ -399,24 +353,20 @@ class Streamlist:
                 return (None, 'timeout')
             except Exception as e:
                 return (None, str(e))
-
             return (None, 'unknown error')
 
 
 class wbrfs_message(Screen):
-    #
-
     def __init__(self, session):
         from webradioFS import fontlist
         self.Faktor=1
         if fontlist[6]>1600:self.Faktor=1.5
         self.fonts=fontlist
-        self.font_size=22 #read_einzeln().reading((("view","font_size"),))[0]
+        self.font_size=22
         self.max_size=(int(70*self.fonts[6]/100),self.fonts[7])
         tmpskin = open(fontlist[5]+"wbrfs_meld.xml")
         self.skin = tmpskin.read()
         tmpskin.close()
-
         Screen.__init__(self, session)
         if fontlist[9]:
              self.skinName = "wbrfs_message_e"
@@ -430,8 +380,6 @@ class wbrfs_message(Screen):
         self.mListe= MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
         self['list'] = self.mListe
 
-
-
     def start(self, text = 'unknown', titel = 'webradioFS', aktion = None, default = False, type1 = 'INFO', timeout = 0,sd=3,fonts1=None):
         self.instance.setZPosition(4)
         self['text'].instance.resize(eSize(*self.max_size))
@@ -439,14 +387,12 @@ class wbrfs_message(Screen):
         self['time'].setText(" 00 ")
         if timeout > 0:
             self['time'].setText(str(timeout))
-
         titelSize = self["titel"].getSize()
         titelSize = eSize(*titelSize)
         timeSize = self["time"].getSize()
         timeSize = eSize(*timeSize)
         self['time'].setText("")
         self['titel'].instance.resize(eSize(titelSize.width()+150, 50))
-
         self.back_color = parseColor('#000000')
         if type1 == 'INFO':
             self.back_color = parseColor('#006400')
@@ -466,55 +412,43 @@ class wbrfs_message(Screen):
         high = textSize2.height()+80
         if breit < (titelSize.width()+int(100*self.Faktor)+timeSize.width()):
             breit=titelSize.width()+int(120*self.Faktor)+timeSize.width()+int(20*self.Faktor)
-        
         self.liste = [(_('No'),None,False,type1)]
         if type1 == '??':
             self.liste = [(_('Yes'),aktion,True,type1),(_('No'),aktion,False,type1)]
         elif aktion:
             self.liste = [(_('Yes'), aktion,True,type1)]
-        #else:
-            
         num = 0
-
         i_res=[]
         for x in self.liste:
                  m_res=[x]
-                 
                  if x and len(x):
                      txt= " "*4+str(x[0])
                      m_res.append(MultiContentEntryText(pos = (0, 0), size = (breit, self.fonts[2]+10), font=0,text = "",color=0xffffff,backcolor=0x8B6508,color_sel=0x000000,backcolor_sel = 0x000000))
                      if txt:m_res.append(MultiContentEntryText(pos = (10, 5), size = (breit-60, self.fonts[2]), font=0,text = txt,color=0xffffff,backcolor=0x8B6508,color_sel=0x000000,backcolor_sel = 0xffffff, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))  #,color=0x000000,backcolor=0x00008B,color_sel=0xf47d19,backcolor_sel = 0x000000
-                 i_res.append(m_res)                 
+                 i_res.append(m_res)
         if len(i_res):self.mListe.setList(i_res)
-
-
         if type1 == '??':
             self['list'].instance.setBackgroundColor(parseColor("#000000"))
             self['list'].instance.setItemHeight(int(self.font_size*self.Faktor)+5)
-            
             self['list'].resize(eSize(breit-40, (self.fonts[2]+10)*len(self.liste)  ))
             self.mListe.l.setItemHeight(self.fonts[2]+10)
             if not self.fonts[4]:
                self.mListe.l.setFont(0, self.fonts[3])
             if default != True: num = 1
-
-            vo=high +20#*Faktor)
+            vo=high +20
             self['list'].instance.move(ePoint(20, vo))
             self['list'].show()
             high = vo+10+int(80*self.Faktor)
         else:
             self['list'].hide()
         self['text'].instance.resize(textSize2)
-
-
         self.instance.resize(eSize(*(breit, high)))
         self.instance.move(ePoint((self.fonts[6]-breit)/2, (self.fonts[7]-high)/2))
         self.instance.setTitle(titel)
         self['time'].instance.move(ePoint(breit-timeSize.width()-int(40*self.Faktor), 10))
-        self['bgr'].instance.resize(eSize(breit, high)) #+(10*Faktor)))
+        self['bgr'].instance.resize(eSize(breit, high))
         self['bgr'].instance.setBackgroundColor(self.back_color)
         self['list'].moveToIndex(num)
-
         self.show()
 
     def set_c_count(self, c_time = None):
@@ -534,24 +468,20 @@ class wbrfs_message(Screen):
         try:
             if index:
                 if index=="vor":
-		    index=self['list'].instance.getCurrentIndex()+1
-		    if index > len(self.liste)-1:
-		        index=0
-                elif index=="back":			
-		    index=self['list'].instance.getCurrentIndex()-1
-		    if index <0:			
-		        index=len(self.liste)-1
-		self['list'].instance.moveSelectionTo(index)
+                    index=self['list'].instance.getCurrentIndex()+1
+                    if index > len(self.liste)-1:
+                        index=0
+                elif index=="back":
+                    index=self['list'].instance.getCurrentIndex()-1
+                    if index <0:
+                        index=len(self.liste)-1
+                self['list'].instance.moveSelectionTo(index)
         except:
             pass
 
 
-
 class write_settings():
-  #from webradioFS import fontlist
   def __init__(self,li3=None):
-  #def __init__(self,name=None,sets=None):
-
       if li3:
           connection = sqlite.connect(set_file)
           connection.text_factory = str
@@ -560,7 +490,7 @@ class write_settings():
             if len(x):  
               name,sets=x
               if name and sets:    
-                  for key,var in sets.items():   #key,var
+                  for key,var in sets.items():
                       cursor.execute('SELECT id FROM settings WHERE nam1 = "%s" AND group1 = "%s";' % (key,name))
                       row = cursor.fetchone()
                       if row is None: 
@@ -574,7 +504,6 @@ class write_settings():
 
 
 class BackupLocationBox(LocationBox):
-    #from webradioFS import fontlist
     def __init__(self, session, text, filename, dir = None, minFree = None):
         inhibitDirs = ['/bin',
          '/boot',
@@ -582,7 +511,7 @@ class BackupLocationBox(LocationBox):
          '/lib',
          '/proc',
          '/sbin',
-         '/sys',                          
+         '/sys',
          '/usr',
          '/var']
         LocationBox.__init__(self, session, text=text, filename=filename, currDir=dir, bookmarks=None, inhibitDirs=inhibitDirs, minFree=minFree)
@@ -590,10 +519,7 @@ class BackupLocationBox(LocationBox):
 
 
 class filemenu:
-    #from webradioFS import right_site
-    
     def __init__(self, session):
-        
         self.session = session
         self.settigspath = None
         self.num = None
@@ -651,45 +577,36 @@ class filemenu:
                         for file1 in listdir(mpath):
                             files.append('/etc/ConfFS/' + file1)
                 comp = self.getCompressionMode(self.settigspath)
-		if tarfile:
-		    try:
-			f = tarfile.open(self.settigspath, 'w:%s' % comp)
-			for sourcefile in files:
-				if path.exists(sourcefile):
-					f.add(sourcefile)
-			f.close()
-
+                if tarfile:
+                    try:
+                        f = tarfile.open(self.settigspath, 'w:%s' % comp)
+                        for sourcefile in files:
+                                if path.exists(sourcefile):
+                                        f.add(sourcefile)
+                        f.close()
                         self.session.open(MessageBox, _('Backup from settings successfully'), type=MessageBox.TYPE_INFO, timeout=15)
-		    except Exception as e:
+                    except Exception as e:
                         self.session.open(MessageBox, _('Backup-Error:')+str(e), type=MessageBox.TYPE_ERROR, timeout=15)
-
-		else:
+                else:
                     try:
                         tarFiles = ' '.join(files)
                         lines = popen('tar cv%sf %s %s' % (comp,self.settigspath, tarFiles)).readlines()
                         self.session.open(MessageBox, _('Settings were restored successfully'), type=MessageBox.TYPE_INFO, timeout=15)
-		    except Exception as e:
+                    except Exception as e:
                         self.session.open(MessageBox, _('Backup-Error:')+str(e), type=MessageBox.TYPE_ERROR, timeout=15)
 
-
-
-
     def getCompressionMode(self, tarname):
-		isGz = tarname.endswith((".tar.gz", ".tgz"))
-		isBz2 = tarname.endswith((".tar.bz2", ".tbz2"))
-		if tarfile:
-			return 'gz' if isGz else 'bz2' if isBz2 else ''
-		else:
-			return 'z' if isGz else 'j' if isBz2 else ''
-        
+                isGz = tarname.endswith((".tar.gz", ".tgz"))
+                isBz2 = tarname.endswith((".tar.bz2", ".tbz2"))
+                if tarfile:
+                        return 'gz' if isGz else 'bz2' if isBz2 else ''
+                else:
+                        return 'z' if isGz else 'j' if isBz2 else ''
+
     def restore(self):
         self.tarfile = 'wbrFS_Favs.tar.gz'
-        #if self.num == 4:
-        #    self.tarfile = "wbrFS_Favs.tar.gz"
         if self.num == 5:
-            self.tarfile = "ConfFS_backup.tar.gz"    
-            #if not fileExists(path.join(path1,self.tarfile)):
-            #            self.tarfile= 'ConfFS.tar.gz'
+            self.tarfile = "ConfFS_backup.tar.gz"
         self.session.openWithCallback(self.callRestore, BackupLocationBox, _('Please select the restore path...'), '')
 
     def callRestore(self, path1):
@@ -708,37 +625,34 @@ class filemenu:
         if res:
                 comp = self.getCompressionMode(self.settigspath)
                 if tarfile:
-		    try:	
+                    try:
                         tarball = tarfile.open(self.settigspath, 'r:%s' % comp)
-			for file_ in tarball:
-			        if not file_.name.startswith("/"):file_.name="/"+file_.name
+                        for file_ in tarball:
+                                if not file_.name.startswith("/"):file_.name="/"+file_.name
                                 if not path.isdir:remove(file_.name)
-			        tarball.extract(file_)
-			        try:
+                                tarball.extract(file_)
+                                try:
                                     chmod(file_.name, file_.mode)
-                                except:    
+                                except:
                                     pass
                         self.session.open(MessageBox, _('Settings were restored successfully')+"\n"+_('Please restart webradioFS') , type=MessageBox.TYPE_INFO, timeout=15)
-		    except Exception as e:
+                    except Exception as e:
                         self.session.open(MessageBox, _('Restore-Error:')+str(e), type=MessageBox.TYPE_ERROR, timeout=15)
-		else:
-		    try:	
+                else:
+                    try:
                         lines = popen('tar xv%sf %s -C /' % (comp, self.settigspath)).readlines()
                         self.session.open(MessageBox, _('Settings were restored successfully')+"\n"+_('Please restart webradioFS'), type=MessageBox.TYPE_INFO, timeout=15)
-		    except Exception as e:
+                    except Exception as e:
                         self.session.open(MessageBox, _('Restore-Error:')+str(e), type=MessageBox.TYPE_ERROR, timeout=15)
 
-
     def err(self, res):
-
         self.session.openWithCallback(self.r_site,MessageBox, res, type=MessageBox.TYPE_ERROR, timeout=20)
+
     def r_site(self,res=None):
-        #if res:
             from webradioFS import right_site
             right_site.show()
 
 class load_rf:
-    
     def __init__(self, session):
         self.session = session
         self.arm=None
@@ -747,15 +661,17 @@ class load_rf:
         for line in rd:
             if line.startswith('model name') and 'ARM' in line:
                 self.arm=True 
+
     def run(self):
-	self.install=None
+        self.install=None
         from webradioFS import fontlist
         self.container=eConsoleAppContainer()
-	if fontlist[4]:
-	    self.dataAvail_conn = self.container.dataAvail.connect(self.read_data)
-	else:
+        if fontlist[4]:
+            self.dataAvail_conn = self.container.dataAvail.connect(self.read_data)
+        else:
             self.container.dataAvail.append(self.read_data)
         self.container.execute("opkg install %s" % "streamripper")
+
     def read_data(self, retval):
         if not fileExists('/usr/bin/streamripper'):
             if retval:
@@ -768,12 +684,11 @@ class load_rf:
                   f=open("/var/webradioFS_debug.log","a")
                   f.write(">> install record module\nfailed Version for ARM-Box\n")
                   f.close()
-                  self.run2()            
+                  self.run2()
             else:
                 self.f()
 
     def run2(self):
-        #self.s('/strf/strr_arm', '/tmp/streamripper')
         if self.arm:
              self.s('/strf/strr_arm', '/usr/bin/streamripper')
         else:
@@ -781,20 +696,14 @@ class load_rf:
         self.s('/strf/slv1', '/usr/lib/libvorbis.so.0.4.3')
         self.s('/strf/slv2', '/usr/lib/libvorbisenc.so.2.0.6')
         self.f()
+
     def s(self, url, file1):
        pass
-	#web="" #not source - for this must have a source!
-        #try:
-        #    h = urllib.urlretrieve(web + url, file1)
-        #    chmod(file1, 493)
-        #except Exception, e:
-        #    pass
 
     def f(self):
         from webradioFS import right_site
         self.r_s= right_site
         self.r_s.hide()
-        #if fileExists('/tmp/streamripper') and os.stat('/tmp/streamripper').st_size:
         if fileExists('/usr/bin/streamripper') and os.stat('/usr/bin/streamripper').st_size:
              self.session.openWithCallback(self.f2, MessageBox, _('Installation finished.') + ' ' + _('Restart must be performed'), MessageBox.TYPE_YESNO, timeout=10)
         else:
@@ -805,12 +714,10 @@ class load_rf:
             quitMainloop(3)
     def f3(self, result=None):
          self.r_s.show()
-         #self.close()
-         
+
 
 class wbrfs_filelist(Screen):
-    #from webradioFS import fontlist
-    skin = '\n\t\t<screen name="wbrfs_filelist" position="center,center" size="560,270" title="webradioFS-select screensaver video" >\n\t\t<ePixmap position="0,230" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on" />\n\t\t<ePixmap position="140,230" size="140,40" pixmap="skin_default/buttons/green.png" transparent="1" alphatest="on" />\n\t\t<widget name="key_red" position="0,230" zPosition="1" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />\n\t\t<widget name="key_green" position="140,230" zPosition="1" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />\n                <widget name="filelist" position="5,5" zPosition="2" size="550,230" scrollbarMode="showOnDemand" />\n                </screen>'
+    skin = '<screen name="wbrfs_filelist" position="center,center" size="560,270" title="webradioFS-select screensaver video" >\n\t\t<ePixmap position="0,230" size="140,40" pixmap="skin_default/buttons/red.png" transparent="1" alphatest="on" />\n\t\t<ePixmap position="140,230" size="140,40" pixmap="skin_default/buttons/green.png" transparent="1" alphatest="on" />\n\t\t<widget name="key_red" position="0,230" zPosition="1" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />\n\t\t<widget name="key_green" position="140,230" zPosition="1" size="140,40" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />\n                <widget name="filelist" position="5,5" zPosition="2" size="550,230" scrollbarMode="showOnDemand" />\n                </screen>'
 
     def __init__(self, session):
         Screen.__init__(self, session)
@@ -834,7 +741,6 @@ class wbrfs_filelist(Screen):
 
 
 class webradioFSdisplay13(Screen):
-    #from webradioFS import fontlist
     def __init__(self, session, parent):
         from webradioFS import fontlist
         skincontent = ''
@@ -859,43 +765,33 @@ class webradioFSdisplay13(Screen):
            if len(sets)>29: self.pic_what=int(sets[29])
            for x in sets[24:29]:
                 self.pic_set.append(x)
-
-
         sets0 = []
         try:
             for x in sets[0:6]:
                 sets0.append(int(x))
-
         except:
             sets = [0,1,1,30,250,4,'Zeile2','',0,14,12,False]
             sets0 = (0, 1, 1, 30, 250, 4)
-
         vo = 0
         while len(sets) < 24:
             vo = vo + 14
             sets.extend(('Zeile2','',vo,14,12,False))
-
         sets_z = (sets[6:12], sets[12:18], sets[18:24])
         self.art = sets0[0]
-
-
         self.zeils = sets0[1]
         self.scroll_line_nr = sets0[2]
         self.scroll = sets0[3]
         self.picload = ePicLoad()
-	if fontlist[4]:
+        if fontlist[4]:
                    self.picload_conn = self.picload.PictureData.connect(self.paintIconPixmapCB)
         else:
                     self.picload.PictureData.get().append(self.paintIconPixmapCB)
-        
-                
         z_list = ['Zeile1', 'Zeile2', 'Zeile3']
         if self.art == 0:
             self.label_list = []
             self.label_pos=[]
             num = 1
             alt = ''
-            #self.line_list=[]
             for x in sets_z:
                 if alt != x[0].strip():
                     alt = x[0].strip()
@@ -909,35 +805,29 @@ class webradioFSdisplay13(Screen):
                             wrap = 0
                             try:
                                 if x[5] == "True":
-                                    wrap = 1 #' + wrap + '"
+                                    wrap = 1
                             except:
                                 pass
-                            #self.line_list.append((x[0],sets0[5],x[2],sets0[4],x[3]))
                             if wrap:
                                skincontent += '<widget source="' + x[0] + '"  position="' + str(sets0[5]) + ',' + str(x[2]) + '" size="' + str(sets0[4]) + ',' + str(x[3]) + '"  render="Label" font="Regular;' + str(x[4]) + '"  />  '
-                            
                             else:
                                 skincontent += '<widget source="' + x[0] + '"  position="' + str(sets0[5]) + ',' + str(x[2]) + '" size="' + str(sets0[4]) + ',' + str(x[3]) + '"  render="Label" font="Regular;' + str(x[4]) + '" noWrap="1" />  '
-                            
                             num += 1
             if self.pic_set and self.pic_set[0]=="True":
                 skincontent += '<widget  name="picon"  position="' + str(self.pic_set[1]) + ',' + str(self.pic_set[2]) + '" size="' + str(self.pic_set[3]) + ',' + str(self.pic_set[4]) + '" alphatest="blend" />  '
             self.skin = '<screen name="webradioFSdisplay13" position="0,0" size="' + str(sets0[4]) + ',800" >' + skincontent + '</screen>'
             self.zeils = len(self.label_list)
             self.label_pos.sort()
-
         else:
             self.label_pos=None
             if self.art == 3 and path.exists("/etc/ConfFS/wbrFS_display.xml"):
                 tmpskin = open('/etc/ConfFS/wbrFS_display.xml')
             elif self.art == 4:
                 tmpskin = open(plugin_path + '/skin/wbrFS_display2.xml')            
-            
             else:
                 tmpskin = open(plugin_path + '/skin/wbrFS_display.xml')
             self.skin = tmpskin.read()
             tmpskin.close()
-   
             self.label2_list = [0, 1, 2]
             if self.art == 3:
               i=0
@@ -948,9 +838,7 @@ class webradioFSdisplay13(Screen):
                          self.label2_list[i] =int( x[0].strip().replace("Zeile","")) -1
                       i+=1
             self.scroll_line = 'Zeile' + str(self.scroll_line_nr)
-
         Screen.__init__(self, session, parent=parent)
-        
         if self.art == 0:
             self.skinName = "webradioFSdisplay_e"+strftime('%Y%m%d', localtime())
         elif self.art == 3:
@@ -976,7 +864,6 @@ class webradioFSdisplay13(Screen):
         self.zeitTimer = eTimer()
         self.picon_show=False
         self.paras=None
-        #if int(self.art) == 1 or (self.pic_set and self.pic_set[0]=="True"):
         self.picon_show=True
         if fontlist[4]:
              self.scrollTimer_conn = self.scrollTimer.timeout.connect(self.scroll_Timeout)
@@ -985,8 +872,6 @@ class webradioFSdisplay13(Screen):
             self.scrollTimer.timeout.get().append(self.scroll_Timeout)
             self.zeitTimer.timeout.get().append(self.zeit_Timeout)
 
-
-
     def addWatcher(self):
         self.parent.onChangedEntry.append(self.selectionChanged)
         self.parent.selectionChanged()
@@ -994,13 +879,13 @@ class webradioFSdisplay13(Screen):
     def removeWatcher(self):
         self.parent.onChangedEntry.remove(self.selectionChanged)
 
-
     def paintIconPixmapCB(self, picInfo=None):
-           if self.picload:     
+           if self.picload:
                 ptr = self.picload.getData()
-		if ptr != None:
-			self['picon'].instance.setPixmap(ptr)
+                if ptr != None:
+                        self['picon'].instance.setPixmap(ptr)
                         self['picon'].show()
+
     def updateIcon(self,file1=None):
                if self.picload and fileExists(file1):
                    if self.paras==None:
@@ -1009,12 +894,9 @@ class webradioFSdisplay13(Screen):
                         self.picload.setPara((self['picon'].instance.size().width(), self['picon'].instance.size().height(), sc[0], sc[1], False, 1, "#00000000"))
                    self.picload.startDecode(file1)
 
-
-
     def selectionChanged(self, Zeile1 = '', Zeile2 = 'webradioFS', Zeile3 = '', display_art = 'normal', picon = None):
-      if self.art != 2:    
+      if self.art != 2:
         self.pos = 0
-        #sc_l = (Zeile1, Zeile2, Zeile3)
         if Zeile1==_("webradioFS-Menu"):display_art = 'liste'
         if display_art != 'liste':
            self['picon'].show()
@@ -1028,10 +910,8 @@ class webradioFSdisplay13(Screen):
                       self['picon'].hide()
         else:
             self['picon'].hide()
-
         if self.scrollTimer.isActive():
                     self.scrollTimer.stop()
-
         if Zeile1 != None:
           if int(self.art) == 0:
             if display_art != 'liste':
@@ -1058,8 +938,6 @@ class webradioFSdisplay13(Screen):
                         else:
                             self[x[0]].setText(text1.replace('*x*', strftime('%H:%M', localtime())) + text2.replace('*x*', strftime('%H:%M', localtime())))
             else:
-                #if self.scrollTimer.isActive():
-                #    self.scrollTimer.stop()
                 if self.zeils == 1 or self.zeils == 2:
                     self[self.label_list[0][0]].setText(Zeile2)
                     if self.zeils == 2:
@@ -1069,37 +947,22 @@ class webradioFSdisplay13(Screen):
                         text_liste=(Zeile1,Zeile2,Zeile3)
                         for y in self.label_list:
                            ind= self.label_pos.index(y[2])
-                           self[y[0]].setText(text_liste[ind])                    
-                    
+                           self[y[0]].setText(text_liste[ind])
                     else:
                         self[self.label_list[0][0]].setText(Zeile1)
                         self[self.label_list[1][0]].setText(Zeile2)
                         self[self.label_list[2][0]].setText(Zeile3)
-
-          
-
-
-          
           else: 
               sc_l = (Zeile1, Zeile2, Zeile3,'')
-             
               if display_art != 'liste':
-                
                 self['Zeile1'].setText(sc_l[self.label2_list[0]])
                 self['Zeile2'].setText(sc_l[self.label2_list[1]])
                 self['Zeile3'].setText(sc_l[self.label2_list[2]])
-                #if self.scroll_line_nr > 0:
-                
-                    
-
-
               else:
                 self['Zeile3'].text = Zeile3
                 self['Zeile1'].text = Zeile1
                 self['Zeile2'].text = Zeile2
-
- 
-              self.scroll_text = sc_l[self.label2_list[self.scroll_line_nr-1]]     
+              self.scroll_text = sc_l[self.label2_list[self.scroll_line_nr-1]]
           try:
               self.display_text = self.scroll_text
               self.dp_text = self.scroll_text
@@ -1109,17 +972,17 @@ class webradioFSdisplay13(Screen):
                 self.zeit_Timeout()
           if display_art != 'liste':
             self[self.scroll_line].text = self.scroll_text
- 
             if self.scroll > 0:
               if display_art != 'liste':
                 if self.scroll_line_nr > 0 and len(self.dp_text):
-                    self.scroll_size=400#self[self.scroll_line].size().width()
+                    self.scroll_size=400
                     if not self.scrollTimer.isActive():
                         self.scroll_Timeout()
             else:
               self[self.scroll_line].text = self.scroll_text
           else:
             self.zeit=None 
+
     def zeit_Timeout(self):
       if self.zeit:  
         time1 = strftime('%H:%M', localtime())
@@ -1132,18 +995,18 @@ class webradioFSdisplay13(Screen):
             if len(self.zeit[1]):
                 t1 = '%s%s' % (self.zeit[1], '   ')
             self[self.zeit[0]].setText(t1 + time1)
-        
       if self.picload and self.picon_show and self.pic_what==2:
            if fileExists("/tmp/.wbrfs_pic"):
               if self.opicon:
                   self.updateIcon("/tmp/.wbrfs_pic")
                   self.opicon=None
-              else:                
+              else:
                 pichash = popen("md5sum "+"/tmp/.wbrfs_pic").read()
                 if pichash != self.althash:   
                    self.althash=pichash
                    self.updateIcon("/tmp/.wbrfs_pic")
       self.zeitTimer.startLongTimer(1)
+
     def scroll_Timeout(self):
         self.left=self.left+1
         if self.left>self.scroll_size or self.left<1:
@@ -1158,8 +1021,6 @@ class webradioFSdisplay13(Screen):
                 self.dp_text = '%s%s%s' % (self.dp_text, '     ', self.display_text)
             if '*x*' in self.dp_text:
                 self.dp_text = self.dp_text.replace('*x*', strftime('%H:%M', localtime()))
-
-            #self[self.scroll_line].move(ePoint(self.scroll_size-self.left, 300))
             self.scrollTimer.start(int(self.scroll) * 30)
 
 
@@ -1182,7 +1043,6 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
         keys=("art","zeilen","scroll_line","scroll_speed","len","hp","l1t","l1t2","l1p","l1h",
               "l1f","l1z","l2t","l2t2","l2p","l2h","l2f","l2z","l3t","l3t2",
               "l3p","l3h","l3f","l3z","pic_on","pic_pos_l","pic_pos_h","pic_size_b","pic_size_h","what")
-
         for x in sets:
                if x == "True":
                   self.m_sets[keys[i]]=True
@@ -1191,7 +1051,6 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
                else:
                    self.m_sets[keys[i]]=x
                i+=1
-        
         self.art = NoSave(ConfigSelection(default=int(self.m_sets["art"]), choices=[(0, _('by settings')), (1, _('by xml-file')), (3, "/etc/ConfFS/wbrFS_display.xml"), (4, _("single-line")),(2, _('deactivated'))]))
         self.zeilen = NoSave(ConfigInteger(int(self.m_sets["zeilen"]), (1, 3)))
         self.scroll_line = NoSave(ConfigInteger(int(self.m_sets["scroll_line"]), (0, 3)))
@@ -1204,8 +1063,6 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
         self.pic_pos_o = NoSave(ConfigInteger(int(self.m_sets["pic_pos_h"]), (0, 999)))
         self.pic_size_b = NoSave(ConfigInteger(int(self.m_sets["pic_size_b"]), (0, 999)))
         self.pic_size_h = NoSave(ConfigInteger(int(self.m_sets["pic_size_h"]), (0, 999)))
-
-        
         self.txt_choices2= [('Zeile1', _('Station-Name')),('Zeile2', _('information transmitted')),('Zeile3', _('Favorite name')),('', '')]
         self.txt_choices1= [('Zeile1', _('Station-Name')),('Zeile2', _('information transmitted')),('Zeile3', _('Favorite name')),('time', _('time')),('', '')]
         self.choices_test=('Zeile1','Zeile2','Zeile3')
@@ -1225,7 +1082,6 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
         self.l1h = NoSave(ConfigInteger(int(self.m_sets["l1h"]), (0, 999)))
         self.l1f = NoSave(ConfigInteger(int(self.m_sets["l1f"]), (0, 99)))
         self.l1z = NoSave(ConfigYesNo(default=self.m_sets["l1z"]))
-        
         self.l2t = NoSave(ConfigSelection(default=r12, choices=self.txt_choices))
         self.l2t2 = NoSave(ConfigSelection(default=self.m_sets["l2t2"], choices=self.txt_choices1))
         self.l2p = NoSave(ConfigInteger(int(self.m_sets["l2p"]), (0, 999)))
@@ -1234,7 +1090,6 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
         if str(self.m_sets["l2z"]) !="True" and str(self.m_sets["l2z"]) !="False":
             self.m_sets["l2z"]=False 
         self.l2z = NoSave(ConfigYesNo(default=self.m_sets["l2z"]))
-        
         self.l3t = NoSave(ConfigSelection(default=r13, choices=self.txt_choices))
         self.l3t2 = NoSave(ConfigSelection(default=self.m_sets["l3t2"], choices=self.txt_choices1))
         self.l3p = NoSave(ConfigInteger(int(self.m_sets["l3p"]), (0, 999)))
@@ -1243,25 +1098,20 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
         self.l3z = NoSave(ConfigYesNo(default=self.m_sets["l3z"]))
         Screen.__init__(self, session)
         if fontlist[9]:
-            self.skinName = "WebradioFSSetup_13_e"        
+            self.skinName = "WebradioFSSetup_13_e"
         else:
             self.skin=self.skin.replace('backgroundColor="#000000"','')
             self.skin=self.skin.replace('foregroundColor="#ffffff"','')
             self.skinName = "WebradioFSSetup_13"
-
         self.onChangedEntry = []
-        
         self["key_red"] = Label(_("Cancel"))
         self["key_green"] = Label(_("Save"))
         self["balken"] = Label("")
         self["key_yellow"] = Label("")
-        self["key_blue"] = Label(_("Standards"))        
+        self["key_blue"] = Label(_("Standards"))
         self["rec_txt"] = Label(_('Display Settings'))
         self["playtext"] = StaticText("")
         self["green_pic"] = Pixmap()
-
-        
-        
         self['actions'] = ActionMap(['OkCancelActions', 'ColorActions'], {'ok': self.saveConfig,
          'cancel': self.exit,
          'red': self.exit,
@@ -1274,9 +1124,9 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
         self.onLayoutFinish.remove(self.layoutFinished)
         if self.fonts[8] or self.fonts[9]:
           try:
-            if not self.fonts[4]: # and not my_settings['big_setup']:
+            if not self.fonts[4]:
                 self['config'].instance.setFont(self.fonts[3])
-                self['config'].instance.setItemHeight(self.fonts[2]) #(int((font+10)*font_scale))
+                self['config'].instance.setItemHeight(self.fonts[2])
             else:
                     from skin import parseFont
                     stylemgr = eWindowStyleManager.getInstance()
@@ -1287,8 +1137,6 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
                     stylemgr.setStyle(0, styleskinned)
           except:
               pass
-
-
         self.refresh()
 
     def refresh(self):
@@ -1296,16 +1144,12 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
             if self.l1t.value not in self.choices_test: self.l1t.value=''
             if self.l2t.value not in self.choices_test: self.l2t.value=''
             if self.l3t.value not in self.choices_test: self.l3t.value=''
-            #self.txt_choices = self.txt_choices2
-            
             self.l1t = NoSave(ConfigSelection(default=self.l1t.value, choices=self.txt_choices2))
-	    self.l2t = NoSave(ConfigSelection(default=self.l2t.value, choices=self.txt_choices2))
+            self.l2t = NoSave(ConfigSelection(default=self.l2t.value, choices=self.txt_choices2))
             self.l3t = NoSave(ConfigSelection(default=self.l3t.value, choices=self.txt_choices2))        
-        
         else:
-                #self.txt_choices = self.txt_choices1
                 self.l1t = NoSave(ConfigSelection(default=self.l1t.value, choices=self.txt_choices1))
-		self.l2t = NoSave(ConfigSelection(default=self.l2t.value, choices=self.txt_choices1))
+                self.l2t = NoSave(ConfigSelection(default=self.l2t.value, choices=self.txt_choices1))
                 self.l3t = NoSave(ConfigSelection(default=self.l3t.value, choices=self.txt_choices1))
         self.instance.setZPosition(2)
         timDisplConfigList = []
@@ -1317,10 +1161,8 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
             if self.art.value == 0:
                 timDisplConfigList.extend((getConfigListEntry("-- "+_('Skin and xml file have no effect!')+" --"),))
                 timDisplConfigList.extend((getConfigListEntry(_('Number of lines:'), self.zeilen),))
-                
             if self.art.value !=4:
                 timDisplConfigList.extend((getConfigListEntry(_('Scroll-line:') + '(0-3)', self.scroll_line),))
-                
             timDisplConfigList.extend((getConfigListEntry(_('Scroll-Speed:') + ' (0-99)', self.scroll_speed),))
             if self.art.value ==3:
                 timDisplConfigList.extend((getConfigListEntry(_('Line') + ' 1: '),
@@ -1341,12 +1183,11 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
                     getConfigListEntry(_('Logo/Picture Settings')),
                     getConfigListEntry(_('What show'),self.pic_what),
                     getConfigListEntry(_('Logo/Picture Pos. left'),self.pic_pos_l),
-                    getConfigListEntry(_('Logo/Picture Pos. top'), self.pic_pos_o),                                                              
+                    getConfigListEntry(_('Logo/Picture Pos. top'), self.pic_pos_o),
                     getConfigListEntry(_('Logo/Picture widht'), self.pic_size_b),
                     getConfigListEntry(_('Logo/Picture high'), self.pic_size_h),
                     getConfigListEntry('')
                     ))
-                    
                 timDisplConfigList.extend((getConfigListEntry(_('Line') + ' 1: '),
                  getConfigListEntry(_('Text'), self.l1t),
                  getConfigListEntry(_('add more text'), self.l1t2),
@@ -1354,10 +1195,6 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
                  getConfigListEntry(_('height') + '(0-999)', self.l1h),
                  getConfigListEntry(_('Font-Size') + '(0-99)', self.l1f),
                  getConfigListEntry(_('line breaks'), self.l1z)))
-
-
-
-
                 if self.zeilen.value > 1:
                     timDisplConfigList.extend((getConfigListEntry(''),
                      getConfigListEntry(_('Line') + ' 2: '),
@@ -1380,12 +1217,12 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
                 if self.art.value !=4:
                    timDisplConfigList.extend((getConfigListEntry(_('What show'),self.pic_what),))
                 timDisplConfigList.extend((getConfigListEntry(_('make all other settings in the xml-file!')),))
-
         self["config"].setList(timDisplConfigList)
 
     def standards(self):
           standards_list=[(_("VFD-Display"),1),(_("Grafik-Display"),2),(_("Grafik-Display 480x320"),3)]
           self.session.openWithCallback(self.sel_standards,ChoiceBox,_("Select Standards"),standards_list)
+
     def sel_standards(self,answer=None):
          if answer:  
            self.save_list=None
@@ -1397,7 +1234,6 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
                self.save_list="0,3,3,30,480,10,time,,5,50,48,False,Zeile1,,60,50,44,False,Zeile2,,110,50,42,False,True,20,180,440,120,2"
            if self.save_list:
               self.session.openWithCallback(self.sav_standards,MessageBox, _('Save Standard-Settings?'), type=MessageBox.TYPE_YESNO)
-
 
     def sav_standards(self,answer=None):
         if answer:
@@ -1464,16 +1300,15 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
                 if not path.exists("/etc/ConfFS/wbrFS_display.xml"):
                     ret = copyfile(plugin_path+"/skin/wbrFS_display.xml","/etc/ConfFS/wbrFS_display.xml")
         if len(save_list):
-          #set_file='/etc/ConfFS/webradioFS_sets.db'
           connection = sqlite.connect(set_file)
           connection.text_factory = str
           cursor = connection.cursor()
-          cursor.execute('SELECT id FROM settings WHERE nam1 = "%s" AND group1 = "%s";' % ("displayb","view"))      #self.m_sets_view["displayb"]
-	  row = cursor.fetchone()
-	  if row is None: 
+          cursor.execute('SELECT id FROM settings WHERE nam1 = "%s" AND group1 = "%s";' % ("displayb","view"))
+          row = cursor.fetchone()
+          if row is None: 
                     cursor.execute("INSERT INTO settings (group1,nam1,wert1) VALUES(?,?,?);",  ("view","displayb",save_list))
-	  else:
-		cursor.execute('UPDATE settings SET wert1 = ? WHERE id = ?;',  (save_list,row[0]))
+          else:
+                cursor.execute('UPDATE settings SET wert1 = ? WHERE id = ?;',  (save_list,row[0]))
           connection.commit()
           cursor.close()
           connection.close()
@@ -1482,15 +1317,12 @@ class webradioFSsetDisplay(Screen, ConfigListScreen):
 
     def exit(self):
         self.close()
-        
 
 
 class tag_read:
-    #from webradioFS import fontlist
     def read_tags(self,au_path=None,mcover=None):
             mtags=None
             if au_path:
-
                            maudio = None
                            mtitle = "n/a"
                            mgenre = "n/a"
@@ -1498,308 +1330,59 @@ class tag_read:
                            malbum = "n/a"
                            mdate = "n/a"
                            mlength = 0
-                           #mcover=None
                            mpathname=au_path
-                           if mutagen:     
+                           if mutagen:
                                 if mpathname.lower().endswith(".mp3"):
                                     if not mcover:
-                                        try:	
+                                        try:
                                             maudio = ID3(mpathname)
                                             apicframes = maudio.getall("APIC")
-                            		    if len(apicframes) >= 1:
-					        mcover=apicframes[0].data
-                            	        except:                            		
+                                            if len(apicframes) >= 1:
+                                                mcover=apicframes[0].data
+                                        except:
                                             maudio = None
                                     try: maudio = MP3(mpathname, ID3 = EasyID3)
-                            	    except: maudio = None
-                            	elif mpathname.lower().endswith(".flac"):
-                            		try: maudio = FLAC(mpathname)
-                            		except: maudio = None
-                            	elif mpathname.lower().endswith(".m4a") or mpathname.lower().endswith(".mp4"):
-                            		try: maudio = EasyMP4(mpathname)
-                            		except: maudio = None
-                            	elif mpathname.lower().endswith(".ogg"):
-                            		try: maudio = OggVorbis(mpathname)
-                            		except: maudio = None
-                            	mfilename = path.splitext(path.basename(mpathname))[0]
-                            	if maudio:
-                            		mtitle = self.getEncodedString(maudio.get('title', [mfilename])[0])
-                            		malbum = self.getEncodedString(maudio.get('album', ['n/a'])[0])
-                            		mgenre = self.getEncodedString(maudio.get('genre', ['n/a'])[0])
-                            		martist = self.getEncodedString(maudio.get('artist', ['n/a'])[0])
-                            		mdate = self.getEncodedString(maudio.get('date', ['n/a'])[0])
-                            		try:
-                            			mlen = int(maudio.info.length)
-                            			mlength = str(datetime_timedelta(seconds=mlen)).encode("utf-8", 'ignore')
-                            			if mlen < 3600:
-                            				mlength = mlength[-5:]
-                            		except:
-                            			mlength = 0
-										
-                            	mtags= (mcover,mtitle,martist,malbum,mgenre,mdate,mlength)
+                                    except: maudio = None
+                                elif mpathname.lower().endswith(".flac"):
+                                    try: maudio = FLAC(mpathname)
+                                    except: maudio = None
+                                elif mpathname.lower().endswith(".m4a") or mpathname.lower().endswith(".mp4"):
+                                    try: maudio = EasyMP4(mpathname)
+                                    except: maudio = None
+                                elif mpathname.lower().endswith(".ogg"):
+                                    try: maudio = OggVorbis(mpathname)
+                                    except: maudio = None
+                                mfilename = path.splitext(path.basename(mpathname))[0]
+                                if maudio:
+                                    mtitle = self.getEncodedString(maudio.get('title', [mfilename])[0])
+                                    malbum = self.getEncodedString(maudio.get('album', ['n/a'])[0])
+                                    mgenre = self.getEncodedString(maudio.get('genre', ['n/a'])[0])
+                                    martist = self.getEncodedString(maudio.get('artist', ['n/a'])[0])
+                                    mdate = self.getEncodedString(maudio.get('date', ['n/a'])[0])
+                                    try:
+                                        mlen = int(maudio.info.length)
+                                        mlength = str(datetime_timedelta(seconds=mlen)).encode("utf-8", 'ignore')
+                                        if mlen < 3600:
+                                            mlength = mlength[-5:]
+                                    except:
+                                        mlength = 0
+                                mtags= (mcover,mtitle,martist,malbum,mgenre,mdate,mlength)
             return mtags
 
     def getEncodedString(self,value):
-	returnValue = ""
-	try:
-		returnValue = value.encode("utf-8", 'ignore')
-	except UnicodeDecodeError:
-		try:
-			returnValue = value.encode("iso8859-1", 'ignore')
-		except UnicodeDecodeError:
-			try:
-				returnValue = value.decode("cp1252").encode("utf-8")
-			except UnicodeDecodeError:
-				returnValue = "n/a"
-	return returnValue	
-
-
-
-
-#not source!!
-web1 = ''
-web = 'https://www.' + web1
-
-
-
-class load_dats2:
-
-  
-  def states(self):
-            import json
-            info1=["","","","","",""]
-            request = urllib2.Request("http://at1.api.radio-browser.info/json/stats")
-            request.add_header('User-Agent', 'webradioFS')
-            read_dats1 =  urllib2.urlopen(request, timeout=10)
-            read_dats =  read_dats1.read()
-            x=json.loads(read_dats)
-            info1=(str(x["stations"]),str(x["stations_broken"]),str(x["countries"]),str(x["languages"]),str(x["tags"]))
-            return info1
-  def reading(self,num="",name1="",name2=""):
-        errtxt=""
-        ctx=None
-        cont2=None
-        read_dats=""
-        gnr_list=[]
-
-
-
-   
-        if len(errtxt): errtxt=errtxt+"\n"
-        data=None
-        if num=="list":
-                sturl="http://at1.api.radio-browser.info/json/"+name1
-        else:
-           sturl="https://at1.api.radio-browser.info/json/stations/"+num+"/"+urllib2.quote(name2)
-
-        request = urllib2.Request(sturl)
-        request.add_header('User-Agent', 'webradioFS')            
-
-        read_dats1=None
+        returnValue = ""
         try:
-           read_dats1 =  urllib2.urlopen(request, timeout=10)
-           err = False
-        except urllib2.HTTPError:
-			errtxt+="HTTP error\n"
-			err = True
-        except urllib2.URLError:
-			errtxt+="URL error\n"
-			err = True
-        except socket.timeout:
-			errtxt+="timeout\n"
-			err = True
-        except ssl.SSLError:
-			errtxt+="SSL timeout\n"
-			err = True        
-        if err:
-            read_dats1 = None
-            try:
-                read_dats1 =  urllib2.urlopen(request, verify=False, timeout=10)#.readlines()
-                err = False
-            except Exception, e:
-                errtxt+="1: "+str(e)+"\n"
+                returnValue = value.encode("utf-8", 'ignore')
+        except UnicodeDecodeError:
+                try:
+                        returnValue = value.encode("iso8859-1", 'ignore')
+                except UnicodeDecodeError:
+                        try:
+                                returnValue = value.decode("cp1252").encode("utf-8")
+                        except UnicodeDecodeError:
+                                returnValue = "n/a"
+        return returnValue
 
-
-        if not err:
-            errtxt=""
-            try:        
-                 read_dats =  read_dats1.read().decode("utf-8", 'ignore')
-            except Exception, e:
-                    read_dats=""
-                    errtxt+="4: "+str(e)+"\n"
-        else:
-           read_dats=""        
-               
-
-        if read_dats is None:read_dats=""
-        if errtxt !="":
-            f2=open("/tmp/webradioFS_debug.log","a")
-            f2.write(errtxt+"\n")
-            f2.close()
-
-
-        if read_dats:
-            import json
-            data2=json.loads(read_dats)
-            gnr_list=[]
-            id=8000
-            for x in data2:
-                id+=1
-                if num=="" or num=="list":
-                     gnr_list.append((str(x["name"])+" ("+str(x["stationcount"])+")",name1,str(x["name"]),name2))
-                else:
-                     lnam="webradio-browser "+name2
-                     gnr_list.append((str(x["name"]),1, 0, 0, 0, 1000, 0, 'radio', 0, 0, '',str(x["url"]),str(x["codec"]),str(x["bitrate"])))                     
-
-    
-        return  gnr_list
-
-
-
-
-
-class load_dats:
-  def reading(self,num="",poad="",name1=""):
-        art=1
-        if name1 !="":
-            art=3
-        else:
-            try:
-                num=int(num)
-                if num>0:art=2
-            except:
-                pass
-
-        errtxt=""
-        ctx=None
-        cont2=None
-        read_dats=""
-        try:
-                 context = ssl._create_unverified_context()
-        except:
-                 context = None
-                 errtxt+="ssl cont false," 
-        if context is None:
-          try:
-            _create_unverified_https_context = ssl._create_unverified_context
-            errtxt+=""
-          except AttributeError:
-            pass
-          else:
-            ssl._create_default_https_context = _create_unverified_https_context
-            errtxt+=""
-
-   
-        if len(errtxt): errtxt=errtxt+"\n"
-        data=None
-
-
-        if art==2 or poad !="" or name1 !="":
-           para2meters= {'such' : num,'poad':poad, 'such2' : name1}
-           try:
-             data=None
-             if para2meters and len(para2meters):
-                 data = urllib.urlencode(para2meters)
-           except Exception, e:
-             f2=open("/var/webradioFS_debug.log","a")
-             f2.write("exception read_dats0:\n"+str(e)+"\n")
-             f2.close()
-
-        if data:
-                request = urllib2.Request(web, data)  #+'.php'
-        else:
-                request = urllib2.Request(web)   #+'.php'
-
-        request.add_header('User-Agent', 'webradioFS')            
-
-        read_dats1=None
-        try:
-           if context:
-              read_dats1 =  urllib2.urlopen(request,context = context, timeout=10)
-           else:
-              read_dats1 =  urllib2.urlopen(request, timeout=10)
-           err = False
-        except urllib2.HTTPError:
-			errtxt+="HTTP error\n"
-			err = True
-        except urllib2.URLError:
-			errtxt+="URL error\n"
-			err = True
-        except socket.timeout:
-			errtxt+="timeout\n"
-			err = True
-        except ssl.SSLError:
-			errtxt+="SSL timeout\n"
-			err = True        
-        if err:
-            read_dats1 = None
-            try:
-                read_dats1 =  urllib2.urlopen(request, verify=False, timeout=10)#.readlines()
-                err = False
-            except Exception, e:
-                errtxt+="1: "+str(e)+"\n"
-
-
-        if not err:
-            errtxt=""
-            try:        
-                if art==1 or poad != "":
-                     read_dats =  read_dats1.readlines()
-                elif art>1:                     
-                     read_dats =  read_dats1.read()
-            except Exception, e:
-                    read_dats=""
-                    errtxt+="4: "+str(e)+"\n"
-        else:
-           read_dats=""        
-               
-
-        if read_dats is None:read_dats=""
-        if errtxt !="":
-            f2=open("/tmp/webradioFS_debug.log","a")
-            f2.write(errtxt+"\n")
-            f2.close()
-
-        all_list = None
-        gnr_list=[]
-        if read_dats:
-            if art==1 and poad == "":
-                all_list2 = []
-                for x in read_dats:
-                    x=x.strip()
-                    t2 = x.split(',;,')
-                    if len(t2)>2:
-                        nm= t2[0]
-                        gnr=str(t2[2])
-                        if "Podcast" in gnr and not "Podcast" in nm:
-                             nm=nm+" "*3+"-->Podcast"
-                        t3=(nm,0,t2[1],0,7,"","","",gnr,0,"","","","",t2[3],"",0,"",0)
-                        all_list2.append(t3)
-                        for g in gnr.split(","):
-                            g2=g.strip()
-                            if len(g2) and (g2,"") not in gnr_list:
-                                gnr_list.append((g2,""))
-                    else:                
-                        pass
-
-                all_list2.sort(key=lambda x: x[0].lower())
-                all_list=(all_list2,gnr_list)
-            elif poad != "":
-                all_list = []
-                for x in read_dats:
-                    x=x.strip()
-                    t2 = x.split(',;,')
-                    if len(t2)>3:
-                        all_list.append(t2)
-                if len(all_list):all_list.reverse()
-
-            else:
-                x=read_dats.strip()
-                t2 = x.split(',;,')
-                if len(t2)>3:
-                    all_list=(t2)
-    
-        return  all_list
 
 class fav_import:
     def imp2(self, t = None, version = None, php_num=None,num=None):
@@ -1824,6 +1407,7 @@ class fav_import:
           cursor.close()
           connection.close()
           return z
+
 class fav_import3:
     def imp2(self,dats=None):
         z = None
@@ -1848,8 +1432,6 @@ class fav_import3:
                                 f2.write("exception (01):\n"+liste[0]+"\n")
                                 f2.close()
                                 liste=None
-
-
         elif os.path.exists("/tmp/webradioFS.imp"):
             liste = open("/tmp/webradioFS.imp", "r").readlines()
         n="import"
@@ -1858,7 +1440,6 @@ class fav_import3:
                 grn=liste[0].split(":")
                 n=grn[1].strip()
             gnum=None
-            
             try:
                 cursor.execute('INSERT INTO groups (group1) VALUES("%s");' %n )
                 connection.commit()
@@ -1868,12 +1449,8 @@ class fav_import3:
             for row in cursor:
                 if str(row[1])==n:
                     gnum=row[0]
-
             if gnum != None and str(gnum) != "None":
                 cursor.execute("delete from streams where group1 = %d" % (int(gnum)))
-
-
-
             try:
                 for x in liste:
                     if not x.startswith("#"):
@@ -1885,9 +1462,7 @@ class fav_import3:
                         typ1=None
                         descrip1=" "
                         bitr=0
-		        new=x.replace("{","").split("}")
-                       
-
+                        new=x.replace("{","").split("}")
                         if gnum and len(new)>2:
                             if new[0] and new[1] and new[2]:   
                                if len(str(new[0])):name1=str(new[0]).strip().replace("\n",",")
@@ -1896,26 +1471,24 @@ class fav_import3:
                                if len(new)>3:
                                    if len(str(new[3])):descrip1=str(new[3]).strip().replace("\n",",")
                                    try:
-                            	       bitr=int(new[4])
+                                       bitr=int(new[4])
                                    except:
-                            	       pass
+                                       pass
                                    if len(new)>5 and str(new[5]).strip() != "-":
                                        genre=str(new[5]).strip().replace("\n",",")
                                        if len(new)>6 and str(new[6]).strip() != "-":
                                            genre2=str(new[6]).strip().replace("\n",",")
-                        if (name1 and len(name1)) and (url1 and len(url1)) and (typ1 and len(typ1)):                            
+                        if (name1 and len(name1)) and (url1 and len(url1)) and (typ1 and len(typ1)):
                                 cursor.execute('INSERT INTO streams (name, descrip, url, typ, genre2, defekt,bitrate,genre,volume,uploader,rec,zuv,picon,group1,sscr) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);', 
                                   (name1,descrip1,url1,typ1,genre2,0,bitr,genre,0,"",0,0,0,gnum,'default'))
                                 z=1
-            except Exception, e:
+            except Exception as e:
                                 f2=open("/tmp/webradioFS_debug.log","a")
                                 f2.write("exception (01):\n"+str(e)+"\n"+str(x)+"\n")
                                 f2.close()
-                       
-
         connection.commit()
         cursor.close()
         connection.close()
         if os.path.exists("/tmp/webradioFS.imp"):
             os.remove("/tmp/webradioFS.imp")
-        return z              
+        return z
