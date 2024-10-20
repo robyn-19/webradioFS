@@ -1,8 +1,5 @@
 <!-- 
-Zeile1:Station-Name
-Zeile2: Infos
-Zeile3: Fav
-oder alle = Liste 
+Set the desired info per line in the plugin / gewuenschte Info je Zeile im Plugin einstellen
 -->
 <screen name="webradioFSdisplay13" position="0,0" size="302,264" >
                         <widget source="Zeile1" render="Label" position="4,0" size="302,30" font="Regular;30" noWrap="1"/>
