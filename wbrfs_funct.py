@@ -60,7 +60,7 @@ class read_settings1:
   def reading(self,sets_liste=None):
     if sets_liste:
         if "prog" in sets_liste:
-            self.sets_prog={"version":0,"eidie":"first","wbrmeld":"","hauptmenu": False,"DPKG":False,"exttmenu":True}
+            self.sets_prog={"version":0,"wbrmeld":"","hauptmenu": False,"DPKG":False,"exttmenu":True}
         if "grund" in sets_liste:    
             self.sets_grund={"picsearch":"var1","favpath":"/etc/ConfFS/","exitfrage":False,"nickname":"nn", "stream_sort":1,"wbrbackuppath":"/media/hdd/","startstream1":0,"skin_ignore":False,"zs":False}
         if "opt" in sets_liste:

@@ -23,13 +23,8 @@ rs=open("/var/webradioFS_debug.log","a")
 rs.close()
 npicon='skin/images/webradiofs.png'
 
-
 DPKG = False
 first=1
-#if os.path.exists("/etc/image-version"): 
-#                fm=os.popen("cat /etc/image-version")
-#                lines=fm.read()
-
 
 standbycheck = eTimer()
 try:
@@ -67,7 +62,7 @@ wbrfscursor = connection.cursor()
 
 try:
     wbrfscursor.execute('SELECT COUNT(*) FROM settings WHERE wert2=?', ("progversion"))
-except Exception, e:
+except Exception as e:
     if not new_set and "no such table: settings" in str(e):
          wbrfscursor.execute('ALTER TABLE settings2 RENAME TO settings;')
     else:
@@ -77,7 +72,6 @@ except Exception, e:
       else:
         wbrfscursor.execute('CREATE TABLE IF NOT EXISTS settings2 (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, group1 TEXT, nam1 TEXT, wert1 TEXT, wert2 TEXT NOT NULL UNIQUE)')
         wbrfscursor.execute('SELECT group1,nam1,wert1 from settings')
-#f=open("/tmp/db1","w")
         uniq_tb=[]
         dats=[]
         for row in wbrfscursor:
@@ -133,13 +127,13 @@ except:
 wbrfscursor.execute('SELECT wert1 FROM settings WHERE nam1 = "DPKG";')
 row = wbrfscursor.fetchone()
 if row is None:
-		wbrfscursor.execute("INSERT INTO settings (group1,nam1,wert1) VALUES(?,?,?);",  ("prog","DPKG",DPKG))
+                wbrfscursor.execute("INSERT INTO settings (group1,nam1,wert1) VALUES(?,?,?);",  ("prog","DPKG",DPKG))
 else: 
                 wbrfscursor.execute('UPDATE settings SET wert1 = "%s" WHERE nam1 = "DPKG" AND group1 = "prog";' % (str(DPKG)))
 wbrfscursor.execute('SELECT wert1 FROM settings WHERE nam1 = "exttmenu";')
 row2 = wbrfscursor.fetchone()
 if row2 is None:
-		sets_prog["exttmenu"]=True
+                sets_prog["exttmenu"]=True
                 wbrfscursor.execute("INSERT INTO settings (group1,nam1,wert1) VALUES(?,?,?);",  ("prog","exttmenu","True"))
 else:
         sets_prog["exttmenu"]=row2[0]
@@ -148,12 +142,11 @@ wbrfscursor.execute('SELECT wert1 FROM settings WHERE nam1 = "eidie";')
 global first, eidie
 row4 = wbrfscursor.fetchone()
 if row4 is None:
-		first=1
+                first=1
 else:
     eidie=row4[0]
     if row4[0] == "first" or row4[0] == "aktiviert":
             first=1
-    #        wbrfscursor.execute('UPDATE settings SET wert1 = "aktiviert" WHERE nam1 = "eidie" AND group1 = "grund";')
     else:
         first=None
 connection.commit()
@@ -165,9 +158,9 @@ connection.close()
 from webradioFS import myversion
 ########################################################
 def menu(menuid, **kwargs):
-	if menuid == "mainmenu":
-		return [("webradioFS", main, "webradioFS", None)]
-	return []
+    if menuid == "mainmenu":
+        return [("webradioFS", main, "webradioFS", None)]
+    return []
 
 def running_set(session):
     global running
@@ -186,18 +179,16 @@ def standbycheck2():
 def deak1(ans):
       if ans==True:
           countrys(("deakt","deakt"))
-      
       else:
-           main(session)      
+           main(session)
+
 def countrys(land):
         main(session)
 
 def main(session, **kwargs):
         f_start(session)
 
-
 def f_start(session):
-  #if fr1==2:
     if os.path.isfile(set_file):
        if not running and not Standby.inStandby:
             if DPKG:
@@ -210,12 +201,11 @@ def f_start(session):
             reload(webradioFS)
             from webradioFS import WebradioFSScreen_15#,start
             webradiofs=session.openWithCallback(running_set,WebradioFSScreen_15)
-    else:        
-	     Notifications.AddNotification(MessageBox, _("Settings have been deleted, please restart your stb!")+"\n", type=MessageBox.TYPE_ERROR)
-
+    else:
+         Notifications.AddNotification(MessageBox, _("Settings have been deleted, please restart your stb!")+"\n", type=MessageBox.TYPE_ERROR)
 
 def autostarter():
-         if session and not running:   
+         if session and not running:
             run=1
             if Standby.inStandby:
                  if autoTimes[0][1]=="on_from_standby":
@@ -225,27 +215,25 @@ def autostarter():
                 autostarter2()
 
 def autostarter2():
-          if not running and not Standby.inStandby:      
+          if not running and not Standby.inStandby:
                 autostart_timer.stop()
                 running_set(session)
                 global webradiofs
                 reload(webradioFS)
-                from webradioFS import WebradioFSScreen_15#,start
+                from webradioFS import WebradioFSScreen_15
                 webradiofs=session.openWithCallback(running_set,WebradioFSScreen_15)
                 make_autoT()
-          else:           
+          else:
                 autostart_timer.start(10)
 
 def make_autoT():
-		autostart_timer.stop()
+                autostart_timer.stop()
                 global autoTimes
                 now = datetime.datetime.now()
-		new_autotimes=[]
-		from wbrfs_funct import read_plan
-		u_times=read_plan().reading("1")
-                #f=open("/tmp/start","w")
+                new_autotimes=[]
+                from wbrfs_funct import read_plan
+                u_times=read_plan().reading("1")
                 for x in u_times:
-		    #f.write(str(x)+"\n")
                     args=x[3]
                     active=True
                     if not args['active']:
@@ -261,30 +249,27 @@ def make_autoT():
                               active=False
                     if active:    
                         if args['art'] and args['art'].startswith("on"):
-			
                             now2 = [xl for xl in time.localtime()]
-			    now2[3] = args['time'][0]
-			    now2[4] = args['time'][1]
-			    now2[5] = 0
-			    t2=time.mktime(now2)
-			    utime=datetime.datetime.fromtimestamp(t2)                        
-			    if utime<now: 
-				utime += datetime.timedelta(days=1)
-			    t3=int(time.mktime(utime.timetuple()))
-			    new_autotimes.append((int(t3-time.time()),args['art']))
-		#f.close()
+                            now2[3] = args['time'][0]
+                            now2[4] = args['time'][1]
+                            now2[5] = 0
+                            t2=time.mktime(now2)
+                            utime=datetime.datetime.fromtimestamp(t2)
+                            if utime<now: 
+                                utime += datetime.timedelta(days=1)
+                                t3=int(time.mktime(utime.timetuple()))
+                                new_autotimes.append((int(t3-time.time()),args['art']))
                 autoTimes=new_autotimes
-		if len(autoTimes):
-			autoTimes.sort(key=lambda x: x[0], reverse=False)
-			autostart_timer.startLongTimer(autoTimes[0][0])
+                if len(autoTimes):
+                        autoTimes.sort(key=lambda x: x[0], reverse=False)
+                        autostart_timer.startLongTimer(autoTimes[0][0])
 
 autostart_timer=eTimer()
 autostart_timer.timeout.get().append(autostarter)
-#if len(autoTimes):
 make_autoT()
 
 def restarter2():
-        if session and not running:    
+        if session and not running:
             standbycheck.start(600)
             running_set(session)
             global webradiofs
@@ -292,24 +277,19 @@ def restarter2():
             from webradioFS import WebradioFSScreen_15 #,start
             webradiofs=session.openWithCallback(running_set,WebradioFSScreen_15)
 
-#def ende(session):        
-#        running_set(session)
-        #from webradioFS import ex_right_site
-        #try:t=ex_right_site(session,True)        
-        #except:pass
 def umschalt(stream=None):
     if stream and running:
         webradiofs.web_if_umschalt(stream)
-        
+
 def webrec():
-        webradiofs.webrec()        
+        webradiofs.webrec()
 def playdir(mdir=None):
-    if mdir and running:        
-        webradiofs.web_if_playdir(mdir)        
+    if mdir and running:
+        webradiofs.web_if_playdir(mdir)
 def playdir2(mdir=None):
-    if mdir and running:        
+    if mdir and running:
         webradiofs.web_if_playdir2(mdir)
-def einzelplay(stream=None):        
+def einzelplay(stream=None):
     if stream and running:
         webradiofs.web_if_einzelplay(stream)
 def fav_wechsel(fav=None):
@@ -320,16 +300,14 @@ def list_play(dfile=None,rdir=None,auto=1):
         webradiofs.web_if_listplay(dfile)
 def play_stop(st=None):
     if st and running:
-        webradiofs.web_if_play_stop(st)        
-def abschalt():        
-      if running:  
+        webradiofs.web_if_play_stop(st)
+def abschalt():
+      if running: 
         standbycheck.stop()
         webradiofs.web_if_exit()
 
-
 def standby_toggle(session): 
     Standby.inStandby.Power()
-       
 
 def Plugins(path,**kwargs):
     global plugin_path
@@ -341,30 +319,26 @@ def Plugins(path,**kwargs):
             list.append(PluginDescriptor(name="webradioFS", where = [PluginDescriptor.WHERE_EXTENSIONSMENU],icon = npicon, needsRestart = False,fnc = main))
     list.append(PluginDescriptor(name="webradioFS", description="webradioFS",	where = [PluginDescriptor.WHERE_SESSIONSTART,	PluginDescriptor.WHERE_AUTOSTART], fnc = autostart))
     return list
-	
-	
+
 def autostart(reason, **kwargs):
-	if kwargs.has_key("session"):
-		global session
-		session=kwargs["session"]
-		global webradiofs
-		webradiofs=None
-	if reason == 0 and kwargs.has_key("session"):
-		from Plugins.Extensions.WebInterface.WebChilds.Toplevel import addExternalChild
-		from webradioFSSite import webradioFSweb
-		from twisted.web import static
-		root = static.File("/usr/lib/enigma2/python/Plugins/Extensions/webradioFS")
-		root.putChild("", webradioFSweb())
-		if os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web/external.xml"):
-			try:
-				addExternalChild( ("webradiofs", root, "webradiofs", myversion, True) )
-			except:
-				addExternalChild( ("webradiofs", root) )
-		if os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/OpenWebif/pluginshook.src"):
-			try:
-				addExternalChild( ("webradiofs", root, "webradiofs", myversion) )
-			except:
-				pass
-
-
-   																																													
+    if kwargs.has_key("session"):
+        global session
+        session=kwargs["session"]
+        global webradiofs
+        webradiofs=None
+    if reason == 0 and kwargs.has_key("session"):
+        from Plugins.Extensions.WebInterface.WebChilds.Toplevel import addExternalChild
+        from webradioFSSite import webradioFSweb
+        from twisted.web import static
+        root = static.File("/usr/lib/enigma2/python/Plugins/Extensions/webradioFS")
+        root.putChild("", webradioFSweb())
+        if os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/WebInterface/web/external.xml"):
+            try:
+                addExternalChild( ("webradiofs", root, "webradiofs", myversion, True) )
+            except:
+                addExternalChild( ("webradiofs", root) )
+        if os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/OpenWebif/pluginshook.src"):
+            try:
+                addExternalChild( ("webradiofs", root, "webradiofs", myversion) )
+            except:
+                pass

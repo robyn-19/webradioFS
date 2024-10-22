@@ -95,7 +95,7 @@ from ext import ext_l4l
 l4l_set=ext_l4l()
 
 myname = "webradioFS"
-myversion = "21.06"
+myversion = "21.07"
 wbrfs_saver=None
 versiondat=(2024,10,18)
 
@@ -515,7 +515,7 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
         global streamplayer
         global fontlist
         global zs
-        global sets_opt,sets_grund,sets_view,sets_scr,sets_rec,sets_audiofiles,sets_prog,sets_sismctl,eidie
+        global sets_opt,sets_grund,sets_view,sets_scr,sets_rec,sets_audiofiles,sets_prog,sets_sismctl
         read_list=["grund","opt","rec","audiofiles","scr","sispmctl","prog","view"]
         sets2=read_settings1().reading(read_list)
         num1=0
@@ -538,7 +538,6 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
         sets_sismctl=sets2[5]
         sets_prog=sets2[6]
         sets_view=sets2[7]
-        self.eidie=sets_prog["eidie"]
         set_l4l()
         dspreads=read_einzeln().reading((("view","l4l"),("view","displayb")))
         sets=dspreads[1].split(',')
@@ -4476,8 +4475,6 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
 
     def extras(self):
         menu = []
-        menu.append((_("Import from database"), self.importer,_("import streams from database"))) 
-        menu.append((_("Import from radio-browser"), self.importer2,_("search and import streams from radio-browser project")))
         menu.append((_("Import stream-file"), self.fav_importb,_("read and import streams from *imp-file in /tmp")))
         if os.path.exists(sets_exp["coversafepath"]):
             menu.append((_("Show Stored Titles List"), self.extended_help,_("Show the title stored"),self.extras,2))  
@@ -4572,7 +4569,7 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
             self.session.openWithCallback(self.menuCallback, menu_13, menu,titel,back,self.display_on,l4ls)
 
     def menuCallback(self,choice,back):
-        if back and (choice and choice[1] != self.importer): self.m_back=back  # and choice[1] != self.importer
+        if back and choice: self.m_back=back
         if L4LwbrFS:  
             L4LwbrFS.delete("wbrFS.07.box7")
             L4LwbrFS.delete("wbrFS.08.txt8")
@@ -5472,9 +5469,6 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
         con1=0
         stream_liste=[]
         groups=[]
-        #eidie2=sets_prog["eidie"]
-        #if not len(str(eidie2))or str(eidie2)=="0":
-        #    eidie2=None
         set_groups(groups)
         db=myfav_file
         dbTimer = eTimer()
@@ -6055,12 +6049,6 @@ class WebradioFSSetup_13(Screen, ConfigListScreen):
         self.stream_sort= NoSave(ConfigSelection(choices = [(0,_("None")),(1,_("alphabetically")),(2,_("by user"))],default=sets_grund["stream_sort"]))
         self.hauptmenu = NoSave(ConfigYesNo(default = sets_prog["hauptmenu"]))
         self.exttmenu = NoSave(ConfigYesNo(default = sets_prog["exttmenu"]))
-        try:
-            self.userid = NoSave(ConfigText(default = str(sets_prog["eidie"])))
-        except:
-            fx=open("/tmp/wbrfs_error.txt")
-            fx.write(str(sets_prog["eidie"])+"\n")
-            fx.close()
         self.stream_sort = NoSave(ConfigSelection(default=sets_grund["stream_sort"], choices = [(0,_("None")),(1,_("alphabetically")),(2,_("by user"))]))
         self.wbrbackuppath = NoSave(ConfigDirectory(default = sets_grund["wbrbackuppath"]) )
         self.exitfrage = NoSave(ConfigYesNo(default = sets_grund["exitfrage"]))
@@ -6379,7 +6367,6 @@ class WebradioFSSetup_13(Screen, ConfigListScreen):
                 getConfigListEntry(_("Result for Off-Timer (Standby/Deepstandby):"), self.offtimer_art),
                 getConfigListEntry(_("Question before exiting?"),self.exitfrage),
                 getConfigListEntry(_("Write debug:"), self.debug),
-                getConfigListEntry(_("user-id:"), self.userid),
                 ))
             if sispmctl and self.opt_sispmctl.value:
               self.list.extend((            
@@ -6618,7 +6605,6 @@ class WebradioFSSetup_13(Screen, ConfigListScreen):
                 sets_opt["expert"]=1
             sets_prog["hauptmenu"]=self.hauptmenu.value
             sets_prog["exttmenu"]=self.exttmenu.value
-            sets_prog["eidie"]=self.userid.value
             sets_rec["path"]= self.rec_path.value
             sets_grund={"picsearch":self.picsearch.value,"favpath":self.favpath.value,"exitfrage":self.exitfrage.value,"nickname":"",
             "stream_sort":self.stream_sort.value,"wbrbackuppath":self.wbrbackuppath.value,"startstream1":self.startstream_tmp.value,"skin_ignore":self.skin_ignore.value}
@@ -6695,7 +6681,7 @@ class WebradioFSSetup_13(Screen, ConfigListScreen):
                     tmp_list.append((x[1],x[0]))
                 right_site.hide()
                 self.session.openWithCallback(self.list_sel,  ChoiceBox, title=_("webradioFS - select screensaver"), list=tmp_list)
-        elif self.cur[1] in (self.picwords1,self.picwords2,self.picwords3,self.wbrSSKeyword,self.slideshow_bgcolor,self.userid):
+        elif self.cur[1] in (self.picwords1,self.picwords2,self.picwords3,self.wbrSSKeyword,self.slideshow_bgcolor):
             self.texteingabe()
         elif self.cur[1] in (self.wbrSScolor,self.wbrSSbgcolor):
             testcol= self.test_col()
@@ -6737,7 +6723,7 @@ class WebradioFSSetup_13(Screen, ConfigListScreen):
     def texteingabe(self):
              right_site.hide()
              titel=None
-             if self.cur[1] in (self.picwords3,self.wbrSSKeyword,self.slideshow_bgcolor,self.picwords1,self.picwords2,self.userid):
+             if self.cur[1] in (self.picwords3,self.wbrSSKeyword,self.slideshow_bgcolor,self.picwords1,self.picwords2):
                 text1=self.cur[1].value
                 titel=self.cur[0]
              if titel:
