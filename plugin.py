@@ -33,11 +33,10 @@ try:
 except:
     pass
 
-sets_prog={"Version":"0","eidie":"first","wbrmeld":"","hauptmenu":False,"DPKG":DPKG}
+sets_prog={"Version":"0","wbrmeld":"","hauptmenu":False,"DPKG":DPKG}
 if not os.path.exists("/etc/ConfFS/"):os.mkdir("/etc/ConfFS/")
 set_file='/etc/ConfFS/webradioFS_sets.db'
 
-oldid="first"
 favpath=None
 autoTimes=[]
 new_set=None
@@ -45,12 +44,7 @@ if not os.path.isfile(set_file):
     f=open(set_file,"w")
     f.close()
     new_set=1
-    if os.path.isfile("/etc/wbrfsid"):
-            f=open("/etc/wbrfsid","r")
-            oldid=f.read().rstrip()
-            if not len(oldid): 
-                 oldid="first"
-            f.close()
+
 if os.path.getsize(set_file)<10:new_set=1
 os.chmod('/etc/ConfFS/webradioFS_sets.db', 0644)
 
@@ -67,8 +61,7 @@ except Exception as e:
          wbrfscursor.execute('ALTER TABLE settings2 RENAME TO settings;')
     else:
       if new_set:
-        wbrfscursor.execute('CREATE TABLE IF NOT EXISTS settings (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, group1 TEXT, nam1 TEXT, wert1 TEXT, wert2 TEXT NOT NULL UNIQUE)')    
-
+        wbrfscursor.execute('CREATE TABLE IF NOT EXISTS settings (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, group1 TEXT, nam1 TEXT, wert1 TEXT, wert2 TEXT NOT NULL UNIQUE)')
       else:
         wbrfscursor.execute('CREATE TABLE IF NOT EXISTS settings2 (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, group1 TEXT, nam1 TEXT, wert1 TEXT, wert2 TEXT NOT NULL UNIQUE)')
         wbrfscursor.execute('SELECT group1,nam1,wert1 from settings')
@@ -88,7 +81,7 @@ except Exception as e:
 
 #   aenderungen auch in func beim read aendern!!
 setsb=(
-          ("prog","version","0"),("prog","wbrmeld",""),("prog","eidie",oldid),("prog","hauptmenu","False"),("prog","DPKG",DPKG),("prog","exttmenu","True"),
+          ("prog","version","0"),("prog","wbrmeld",""),("prog","hauptmenu","False"),("prog","DPKG",DPKG),("prog","exttmenu","True"),
           ("grund","picsearch","var1"),("grund","favpath","/etc/ConfFS/"),("grund","exitfrage","False"),("grund","nickname","nn"),
           ("grund","stream_sort",1),("grund","wbrbackuppath","/media/hdd/"),("grund","startstream1","0"),
           ("opt","rec","False"),("opt","views","False"),("opt","expert",0),("opt","scr","False"),("opt","lcr","False"),("opt","audiofiles","False"),("opt","tasten","False"),("opt","display","False"),("opt","sispmctl","False"),
@@ -138,17 +131,6 @@ if row2 is None:
 else:
         sets_prog["exttmenu"]=row2[0]
 
-wbrfscursor.execute('SELECT wert1 FROM settings WHERE nam1 = "eidie";')
-global first, eidie
-row4 = wbrfscursor.fetchone()
-if row4 is None:
-                first=1
-else:
-    eidie=row4[0]
-    if row4[0] == "first" or row4[0] == "aktiviert":
-            first=1
-    else:
-        first=None
 connection.commit()
 import webradioFS
 wbrfscursor.close()
