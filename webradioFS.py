@@ -970,8 +970,11 @@ class WebradioFSScreen_15(Screen, InfoBarSeek, HelpableScreen, InfoBarNotificati
             now = datetime.datetime.now()
             now2 = [x for x in localtime()] 
             startstream=None
-            ut= u_times
-            ut.sort(key=lambda x: x[1], reverse=False)
+            #ut= u_times
+            tme = time.strftime('%H:%M', time.localtime(time.time()))
+            ut = [ x for x in u_times if x[1] > tme ]
+            if not ut: return
+	    ut.sort(key=lambda x: x[1], reverse=False)
             for x in ut:
                 if x[2] and not x[3]['art'].startswith("on"):
                    args=x[3]
